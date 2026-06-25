@@ -1,16 +1,30 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ ✅ DAFTAR FITUR APLIKASI
+ 
+ 1. 📋 Tampilkan Daftar Produk
+- Menampilkan **50 jenis alat tulis kantor (ATK)** lengkap
+- Ada informasi: nama produk, harga, status stok (Tersedia / Habis)
+- Desain rapi, warna lembut, dan enak dilihat
+- Semua tombol bisa diklik dengan efek interaksi
 
-Currently, two official plugins are available:
+ 2. 🔍 Fitur Pencarian Produk
+- Bisa mencari produk berdasarkan nama secara langsung
+- Contoh: ketik "pulpen", "buku", "penggaris" → langsung muncul yang sesuai
+- Pencarian berjalan otomatis saat kamu mengetik
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+ 3. 🛒 Keranjang Belanja
+- Menambahkan produk yang masih tersedia ke dalam keranjang
+- Menghitung jumlah barang yang ditambahkan
+- Menampilkan total harga keseluruhan secara otomatis
+- Bisa menghapus barang dari keranjang jika tidak jadi dibeli
+- Jika stok habis, tombol tambah tidak bisa diklik
 
-## React Compiler
+ 4. 📝 Formulir Pemesanan / Checkout
+- Isi data pemesan: Nama lengkap dan Email
+- Validasi: tidak bisa lanjut jika data belum diisi
+- Setelah dikirim, akan muncul pesan konfirmasi berhasil
+- Keranjang akan otomatis dikosongkan setelah pesanan selesai
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+ 5. 📱 Tampilan Responsif
+- Bisa dibuka dengan baik di layar komputer maupun HP
+- Tata letak menyesuaikan ukuran layar
