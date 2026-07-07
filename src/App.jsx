@@ -1,67 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-// 📦 DATA 50 PRODUK DENGAN STOK BERBEDA (TIDAK SEMUA TERSEDIA)
-const products = [
-  // 📝 KATEGORI PULPEN & ALAT TULIS TINTA
-  { id: 1, name: 'Pulpen Hitam Standar', price: 3500, stock: 15, kategori: 'Pulpen' },
-  { id: 2, name: 'Pulpen Biru Standar', price: 3500, stock: 0, kategori: 'Pulpen' }, // Stok Habis
-  { id: 3, name: 'Pulpen Merah Standar', price: 3500, stock: 10, kategori: 'Pulpen' },
-  { id: 4, name: 'Pulpen Gel Hitam', price: 5000, stock: 8, kategori: 'Pulpen' },
-  { id: 5, name: 'Pulpen Gel Biru', price: 5000, stock: 0, kategori: 'Pulpen' }, // Stok Habis
-  { id: 6, name: 'Pulpen 4 Warna', price: 8500, stock: 3, kategori: 'Pulpen' },
-  { id: 7, name: 'Spidol Besar Hitam', price: 6000, stock: 9, kategori: 'Pulpen' },
-  { id: 8, name: 'Spidol Besar Biru', price: 6000, stock: 0, kategori: 'Pulpen' }, // Stok Habis
-  { id: 9, name: 'Spidol Kecil Warna', price: 4500, stock: 20, kategori: 'Pulpen' },
-  { id: 10, name: 'Stabilo Warna Kuning', price: 7000, stock: 0, kategori: 'Pulpen' }, // Stok Habis
+function App() {
+  const [products, setProducts] = useState([]);
 
-  // 📓 KATEGORI BUKU & KERTAS
-  { id: 11, name: 'Buku Tulis Bergaris', price: 5000, stock: 25, kategori: 'Buku & Kertas' },
-  { id: 12, name: 'Buku Tulis Kotak', price: 5000, stock: 0, kategori: 'Buku & Kertas' }, // Stok Habis
-  { id: 13, name: 'Buku Gambar Besar', price: 7500, stock: 4, kategori: 'Buku & Kertas' },
-  { id: 14, name: 'Buku Gambar Kecil', price: 4500, stock: 18, kategori: 'Buku & Kertas' },
-  { id: 15, name: 'Buku Agenda Kecil', price: 12000, stock: 0, kategori: 'Buku & Kertas' }, // Stok Habis
-  { id: 16, name: 'Kertas HVS A4 70gr', price: 45000, stock: 8, kategori: 'Buku & Kertas' },
-  { id: 17, name: 'Kertas HVS F4 70gr', price: 48000, stock: 2, kategori: 'Buku & Kertas' },
-  { id: 18, name: 'Kertas Warna A4', price: 15000, stock: 0, kategori: 'Buku & Kertas' }, // Stok Habis
-  { id: 19, name: 'Kertas Manila', price: 2000, stock: 30, kategori: 'Buku & Kertas' },
-  { id: 20, name: 'Kertas Karton', price: 3000, stock: 0, kategori: 'Buku & Kertas' }, // Stok Habis
+  useEffect(() => {
+    fetch('https://fakestoreapi.com/products')
+      .then(res => res.json())
+      .then(data => setProducts(data));
+  }, []);
 
-  // ✏️ KATEGORI PENSIL & PENGHAPUS
-  { id: 21, name: 'Pensil 2B', price: 3000, stock: 40, kategori: 'Pensil & Penghapus' },
-  { id: 22, name: 'Pensil HB', price: 3000, stock: 0, kategori: 'Pensil & Penghapus' }, // Stok Habis
-  { id: 23, name: 'Pensil Warna 12 pcs', price: 18000, stock: 15, kategori: 'Pensil & Penghapus' },
-  { id: 24, name: 'Pensil Warna 24 pcs', price: 32000, stock: 0, kategori: 'Pensil & Penghapus' }, // Stok Habis
-  { id: 25, name: 'Penghapus Karet Kecil', price: 2000, stock: 50, kategori: 'Pensil & Penghapus' },
-  { id: 26, name: 'Penghapus Karet Besar', price: 4000, stock: 0, kategori: 'Pensil & Penghapus' }, // Stok Habis
-  { id: 27, name: 'Rautan Pensil Kecil', price: 2500, stock: 30, kategori: 'Pensil & Penghapus' },
-  { id: 28, name: 'Rautan Pensil Putar', price: 12000, stock: 2, kategori: 'Pensil & Penghapus' },
-  { id: 29, name: 'Papan Tulis Pensil', price: 25000, stock: 0, kategori: 'Pensil & Penghapus' }, // Stok Habis
-  { id: 30, name: 'Cairan Koreksi', price: 6000, stock: 18, kategori: 'Pensil & Penghapus' },
-
-  // 📐 KATEGORI PENGGARIS & ALAT BANTU
-  { id: 31, name: 'Penggaris Plastik 15 cm', price: 2500, stock: 35, kategori: 'Penggaris & Alat Bantu' },
-  { id: 32, name: 'Penggaris Plastik 30 cm', price: 4000, stock: 0, kategori: 'Penggaris & Alat Bantu' }, // Stok Habis
-  { id: 33, name: 'Penggaris Besi 30 cm', price: 8000, stock: 12, kategori: 'Penggaris & Alat Bantu' },
-  { id: 34, name: 'Busur Derajat', price: 5000, stock: 0, kategori: 'Penggaris & Alat Bantu' }, // Stok Habis
-  { id: 35, name: 'Jangka Ukur', price: 10000, stock: 5, kategori: 'Penggaris & Alat Bantu' },
-  { id: 36, name: 'Set Segitiga', price: 9000, stock: 18, kategori: 'Penggaris & Alat Bantu' },
-  { id: 37, name: 'Kapur Tulis Putih', price: 1500, stock: 0, kategori: 'Penggaris & Alat Bantu' }, // Stok Habis
-  { id: 38, name: 'Kapur Tulis Warna', price: 3000, stock: 30, kategori: 'Penggaris & Alat Bantu' },
-  { id: 39, name: 'Penghapus Papan Tulis', price: 7000, stock: 0, kategori: 'Penggaris & Alat Bantu' }, // Stok Habis
-  { id: 40, name: 'Perekat Cair Kecil', price: 5000, stock: 25, kategori: 'Penggaris & Alat Bantu' },
-
-  // 📎 KATEGORI ALAT IKAT & JILID
-  { id: 41, name: 'Staples Kecil', price: 8000, stock: 20, kategori: 'Alat Ikat & Jilid' },
-  { id: 42, name: 'Isi Staples Kecil', price: 3000, stock: 0, kategori: 'Alat Ikat & Jilid' }, // Stok Habis
-  { id: 43, name: 'Staples Besar', price: 15000, stock: 12, kategori: 'Alat Ikat & Jilid' },
-  { id: 44, name: 'Isi Staples Besar', price: 5000, stock: 0, kategori: 'Alat Ikat & Jilid' }, // Stok Habis
-  { id: 45, name: 'Penjepit Kertas Kecil', price: 2500, stock: 60, kategori: 'Alat Ikat & Jilid' },
-  { id: 46, name: 'Penjepit Kertas Besar', price: 4000, stock: 5, kategori: 'Alat Ikat & Jilid' },
-  { id: 47, name: 'Lem Kertas Stik', price: 4500, stock: 0, kategori: 'Alat Ikat & Jilid' }, // Stok Habis
-  { id: 48, name: 'Tali Pengikat Kertas', price: 3000, stock: 35, kategori: 'Alat Ikat & Jilid' },
-  { id: 49, name: 'Bolpoin Jilid', price: 6000, stock: 0, kategori: 'Alat Ikat & Jilid' }, // Stok Habis
-  { id: 50, name: 'Map Plastik', price: 7500, stock: 18, kategori: 'Alat Ikat & Jilid' }
-];
+  // ...
+}
 
 function App() {
   const [searchKeyword, setSearchKeyword] = useState('');
