@@ -1,184 +1,124 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
+import React, { useState, useEffect } from 'react';
+import ProductList from './components/ProductList';
+import CartSidebar from './components/CartSidebar';
+import ProductDetail from './components/ProductDetail';
 
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-}
+const CheckoutFormBayangan = () => (
+  <div style={{ border: '1px solid #e2e8f0', padding: '24px', borderRadius: '16px', backgroundColor: '#ffffff', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02)' }}>
+    <h2 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px', color: '#1e293b', letterSpacing: '-0.025em' }}>Informasi Pengiriman</h2>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div>
+        <label style={{ fontSize: '13px', fontWeight: '500', color: '#64748b', display: 'block', marginBottom: '6px' }}>Nama Lengkap</label>
+        <input type="text" placeholder="John Doe" style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px', outline: 'none', transition: 'border-color 0.2s' }} />
+      </div>
+    </div>
+  </div>
+);
 
-.hero {
-  position: relative;
+export default function App() {
+  const [products, setProducts] = useState([]);
+  const [kategoriTerpilih, setKategoriTerpilih] = useState('Semua');
+  const [selectedProduct, setSelectedProduct] = useState(null); 
+  const [searchInput, setSearchInput] = useState('');          
+  const [debouncedSearch, setDebouncedSearch] = useState('');  
+  const [sortBy, setSortBy] = useState('default'); 
 
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
+  useEffect(() => {
+    fetch('https://fakestoreapi.com/products')
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((err) => console.error("Gagal ambil data:", err));
+  }, []);
 
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
-  .framework,
-  .vite {
-    position: absolute;
-  }
+  const produkDifilter = products.filter((product) => {
+    const cocokKata = product.title.toLowerCase().includes(debouncedSearch.toLowerCase());
+    let cocokKategori = true;
+    if (kategoriTerpilih === 'Elektronik') cocokKategori = product.category === 'electronics';
+    else if (kategoriTerpilih === 'Perhiasan') cocokKategori = product.category === 'jewelery';
+    else if (kategoriTerpilih === 'Pria') cocokKategori = product.category === "men's clothing";
+    return cocokKata && cocokKategori;
+  });
 
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
+  const produkDiUrutkan = [...produkDifilter].sort((a, b) => {
+    if (sortBy === 'termurah') return a.price - b.price;
+    if (sortBy === 'termahal') return b.price - a.price;
+    if (sortBy === 'nama') return a.title.localeCompare(b.title);
+    return 0;
+  });
 
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
-}
+  return (
+    <div style={{ padding: '40px 20px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', backgroundColor: '#fafafa', minHeight: '100vh', color: '#1e293b' }}>
+      
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <h1 style={{ fontSize: '32px', color: '#0f172a', fontWeight: '700', letterSpacing: '-0.05em', marginBottom: '8px' }}>LuxeCatalog.</h1>
+        <p style={{ color: '#64748b', fontSize: '14px' }}>Temukan produk pilihan terbaik untuk kebutuhan harianmu.</p>
+      </div>
 
-#center {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
+      {/* Search Bar */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
+        <input 
+          type="text" 
+          placeholder="Cari produk di sini..." 
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          style={{ width: '100%', maxWidth: '1200px', padding: '14px 20px', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '15px', backgroundColor: '#ffffff', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)', outline: 'none' }}
+        />
+      </div>
 
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
-}
+      {/* Filter & Sort Row */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1200px', margin: '0 auto 32px auto', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {['Semua', 'Elektronik', 'Perhiasan', 'Pria'].map((kat) => (
+            <button
+              key={kat} 
+              onClick={() => setKategoriTerpilih(kat)}
+              style={{ backgroundColor: kategoriTerpilih === kat ? '#0f172a' : '#ffffff', color: kategoriTerpilih === kat ? '#ffffff' : '#475569', border: `1px solid ${kategoriTerpilih === kat ? '#0f172a' : '#e2e8f0'}`, padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: '500', fontSize: '14px', transition: 'all 0.2s' }}
+            >
+              {kat}
+            </button>
+          ))}
+        </div>
 
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
+        <div>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', fontSize: '14px', cursor: 'pointer', color: '#475569', fontWeight: '500', outline: 'none' }}
+          >
+            <option value="default">Urutan Standar</option>
+            <option value="termurah">Harga: Terendah</option>
+            <option value="termahal">Harga: Tertinggi</option>
+            <option value="nama">Nama: A - Z</option>
+          </select>
+        </div>
+      </div>
 
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
+      {/* Main Content Grid */}
+      <div style={{ display: 'flex', gap: '32px', maxWidth: '1200px', margin: '0 auto', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+        <div style={{ flex: '3', minWidth: '300px' }}>
+          {products.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '100px 0', color: '#94a3b8', fontSize: '15px' }}>Memuat katalog produk...</div>
+          ) : (
+            <ProductList produk={produkDiUrutkan} onSelect={setSelectedProduct} />
+          )}
+        </div>
 
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
+        <div style={{ flex: '1', display: 'flex', flexDirection: 'column', gap: '24px', minWidth: '320px' }}>
+          <CartSidebar />
+          <CheckoutFormBayangan />
+        </div>
+      </div>
 
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
-}
+      <ProductDetail product={selectedProduct} onClose={() => setSelectedProduct(null)} />
 
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
-}
-
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
-  width: 100%;
-
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
-
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
+    </div>
+  );
 }
